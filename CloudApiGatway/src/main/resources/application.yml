@@ -1,0 +1,57 @@
+server:
+  port: 8989
+  
+spring:
+  application:
+    name: GATWAY-SERVICE     #this is the name of service.
+    
+  cloud:
+    gateway:
+      routes:
+      - id: order-service
+        uri: lb://ORDER-SERVICE
+        predicates:
+        - Path=/order/**    #Any request comes with /order move to the ORDER-SERVICE mention in uri.
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: order-service
+            fallbackuri: forward:/orderFallBack
+
+
+      - id: payment-service
+        uri: lb://PAYMENT-SERVICE
+        predicates:
+        - Path=/payment/**    #Any request comes with /payment move to the PAYMENT-SERVICE mention in uri
+        filters:
+        - name: CircuitBreaker
+          args:
+            name: payment-service
+            fallbackuri: forward:/paymentFallBack
+                    
+    
+    
+#eureka:
+#  client:
+#    register-with-eureka: true    #this is act as a client that why true
+#    fetch-registry: true
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka     #this is the Eureka URI
+#  instance:
+#    hostname: localhost   
+    
+    
+    
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream
+
+hystrix:
+  command:
+    fallbackcmd:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000   # If reponse not get within 5 sec than fallback contoller call.

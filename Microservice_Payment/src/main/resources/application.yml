@@ -1,0 +1,28 @@
+server:
+  port: 9191
+  
+spring:
+  h2:
+    console:
+      enabled: true # to check h2 db hit http://localhost:9191/h2-console/
+  datasource:
+    url: jdbc:h2:mem:testdb    
+    
+  application:
+    name: PAYMENT-SERVICE     #this is the name of service.
+  
+  zipkin:
+    base-url: http://localhost:9411/
+    
+    
+#eureka:
+#  client:
+#    register-with-eureka: true    #this is act as a client that why true
+#    fetch-registry: true
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka     #this is the Eureka URI
+#  instance:
+#    hostname: localhost     
+    
+    
+      

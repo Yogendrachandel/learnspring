@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: CONFIG-SERVER
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/Yogendrachandel/spring-cloud-config-server  
+          clone-on-start: true
+          
+          
+            
+                           
+          
+          
+    
+server:
+  port: 9196
+  
+  
+eureka:
+  client:
+    register-with-eureka: true    #this is act as a client that why true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/    #this is the Eureka URI
+  instance:
+    hostname: localhost   
