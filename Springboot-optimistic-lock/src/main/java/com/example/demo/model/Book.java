@@ -18,18 +18,14 @@ public class Book {
 	@Version
 	private long version;
 
-	
 
-	public Book(String title, String author, String category, int bookId) {
-		super();
+	public Book(String title, String author, String category) {
 		this.title = title;
 		this.author = author;
 		this.category = category;
-		this.id = bookId;
 	}
 
 	public Book() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public String getTitle() {

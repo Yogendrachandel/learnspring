@@ -3,6 +3,8 @@ package com.example.demo.contoller;
 
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.ServiceImpl.BookServiceImpl;
 import com.example.demo.model.Book;
 import com.example.demo.service.BookService;
 
@@ -26,10 +29,13 @@ import com.example.demo.service.BookService;
 public class BookController {
 
 	@Autowired
-	private BookService bookService;
+	private BookServiceImpl bookServiceImpl;
 	
-	@Value("${welcome.message}")
+	
+	@Value("${welcomeMessage}")
 	private String welcomeMsg;
+	
+	
 	
 	
 	@GetMapping("/greet")
@@ -40,51 +46,70 @@ public class BookController {
 		return new ResponseEntity<String>(msg,header,HttpStatus.OK);
 	}
 	
+
 	
 	@PostMapping("/books")
 	public ResponseEntity<Void> addBook(@RequestBody Book book){
-		bookService.addBook(book);
+		bookServiceImpl.addNewBook(book);
 		return  ResponseEntity.status(HttpStatus.CREATED).build();
 		
 	}
 	
-	@GetMapping("/books/{id}")
-	public ResponseEntity<Book> getBookById(@PathVariable("id")int id ){
-		Book book=bookService.getBookById(id);
-		return   ResponseEntity.status(HttpStatus.FOUND).body(book);
-	}
-	
 	@GetMapping("/books")
 	public ResponseEntity<List<Book>> getAllBook(){
-		List<Book>list=bookService.getAllList();
+		List<Book>list=bookServiceImpl.getAllBookList();
 		return ResponseEntity.status(HttpStatus.OK).body(list);
-		
-
 	}
 	
-	@DeleteMapping("/books/{id}")
-	public ResponseEntity<Void> deleteBookById(@PathVariable("id")int id ){
-		bookService.deleteBook(id);
-		return  ResponseEntity.status(HttpStatus.OK).build();
-	}
-	
-	@PutMapping("/books/{id}")
-	public ResponseEntity<Book> updateBookById(@PathVariable("id")int id ,@RequestBody Book book){
-		Book bookAvailable=bookService.getBookById(id);
-		bookAvailable.setAuthor(book.getAuthor());
-		bookAvailable.setCategory(book.getCategory());
-		bookAvailable.setTitle(book.getTitle());
-		
-		return  ResponseEntity.status(HttpStatus.OK).body(bookAvailable);
-		
+	@GetMapping("/books/{id}")
+	public ResponseEntity<Book> getBookById(@PathVariable("id")int id ){
+		Book book=bookServiceImpl.getBookById(id);
+		return   ResponseEntity.status(HttpStatus.FOUND).body(book);
 	}
 	
 	
 	@GetMapping("/booksByAuthor/{author}")
 	public ResponseEntity<List<Book>> getBookByAuthorName(@PathVariable("author")String author ){
-		List<Book> book=bookService.getBookByAuthor(author);
+		List<Book> book=bookServiceImpl.getAllBooksByAuthor(author);
 		return   ResponseEntity.status(HttpStatus.FOUND).body(book);
 	}
+	
+	
+
+	
+	@PutMapping("/books/{id}")
+	public ResponseEntity<Book> updateBookById(@PathVariable("id")int id ,@RequestBody Book book){
+        System.out.println("Creating Executor Service of two fixed threads...");
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
+
+        System.out.println("Creating a Runnable...");
+        Runnable runnableTaskOne = () -> {
+            System.out.println("Inside : " + Thread.currentThread().getName());
+             bookServiceImpl.updateBookById(id,book);
+        };
+        
+        Runnable runnableTaskTwo = () -> {
+            System.out.println("Inside : " + Thread.currentThread().getName());
+             bookServiceImpl.updateBookById(id,book);
+        };
+
+        System.out.println("Submit the task specified by the runnable to the executor service.");
+        executorService.execute(runnableTaskOne);
+        executorService.execute(runnableTaskTwo);
+        
+		return  ResponseEntity.status(HttpStatus.OK).build();
+		
+	}
+	
+	
+	@DeleteMapping("/books/{id}")
+	public ResponseEntity<Void> deleteBookById(@PathVariable("id")int id ){
+		bookServiceImpl.deleteBookById(id);
+		return  ResponseEntity.status(HttpStatus.OK).build();
+	}
+	
+	
+	
 	
 	
 }
