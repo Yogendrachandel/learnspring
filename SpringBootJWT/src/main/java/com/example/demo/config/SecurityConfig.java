@@ -17,7 +17,7 @@ import com.example.demo.jwtFilter.JwtFilter;
 import com.example.demo.services.CustomUserDetailService;
 
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug=true)//to enabled debugging in spring security purpose only, in real production env never set this (debug=true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	@Autowired
@@ -29,19 +29,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		// configure AuthenticationManager so that it knows from where to load
+		// user for matching credentials
+		
 		auth.userDetailsService(userDetailService);
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable().authorizeRequests().antMatchers("/authenticate").permitAll().anyRequest().authenticated().and().exceptionHandling().and().sessionManagement()
-		.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);//register filter.
+		http.csrf().disable().authorizeRequests().antMatchers("/authenticate").permitAll()
+		.anyRequest().authenticated().and().exceptionHandling()
+		.and().sessionManagement()
+		.sessionCreationPolicy(SessionCreationPolicy.STATELESS);// To make application session stateless so that  no token like JSESSIONID or other  CSRF token store will not store in session or cookie of Application
+		//poilicy of SessionCreationPolicy- ALWAYS,	NEVER,	IF_REQUIRED,STATELESS
+		http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);// Register our custom filter ,here we are telling our custom filter to call  before  of mention(UsernamePasswordAuthenticationFilter)  spring filter.
 	}
 	
 	
 	
-	
+	//Use in Controller class with @Autowired annotaion
 	@Override
 	@Bean
 	public AuthenticationManager authenticationManagerBean() throws Exception {

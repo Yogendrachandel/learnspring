@@ -21,13 +21,16 @@ public class WelcomeController {
 	@Autowired
 	private AuthenticationManager authenticationManager;
 	
+	
+	//To call GET  endpoint pass the Autorization header with the token generated in post call.
 	@GetMapping("/")
 	public String welcome() {
 		
 		return "Welcome to Json web token practice";
 	}
 
-	
+	//Hit the post endpoint  : http://localhost:8080/authenticate
+	 //and  pass the body with username and password as json. 
 	@PostMapping("/authenticate")
 	public String generateToken(@RequestBody AuthRequest authrequest) throws Exception {
        try {
