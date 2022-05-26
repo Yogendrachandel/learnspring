@@ -20,6 +20,14 @@ import com.example.demo.services.CustomUserDetailService;
 @EnableWebSecurity(debug=true)//to enabled debugging in spring security purpose only, in real production env never set this (debug=true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
+	/*
+	 * Read this spring security with JWT :
+	 *  1)
+	 * https://www.toptal.com/spring/spring-security-tutorial
+	 *  2)
+	 * https://www.javainuse.com/spring/boot-jwt
+	 */
+	
 	@Autowired
 	private JwtFilter jwtFilter;
 	
