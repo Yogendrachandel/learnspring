@@ -49,7 +49,7 @@ public class JwtFilter  extends OncePerRequestFilter{
 			 
 			 
 		 if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null) {
-			 System.out.println("#### Going to call user record from DB ####");
+			 System.out.println("#### Going to call user record from DB to validate the token ####");
 			 
 			 UserDetails userDetails= customUserDetailService.loadUserByUsername(username);
 			 
